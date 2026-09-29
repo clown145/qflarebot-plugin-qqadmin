@@ -1,0 +1,352 @@
+{
+  "name": "qqadmin",
+  "version": "0.1.0",
+  "apiVersion": 3,
+  "permissions": [
+    "db",
+    "group_manage",
+    "recall",
+    "proactive"
+  ],
+  "depends": {},
+  "conflicts": [],
+  "commands": [
+    {
+      "name": "群管配置",
+      "aliases": [
+        "群管设置"
+      ],
+      "usage": "/群管配置 或 /群管配置 <中文键: 值，每行一项>",
+      "description": "查看或修改本群群管配置",
+      "panelOnlyAdmin": true,
+      "scenes": [
+        "group"
+      ]
+    },
+    {
+      "name": "群管重置",
+      "usage": "/群管重置 或 /群管重置 all",
+      "description": "本群恢复跟随默认配置",
+      "panelOnlyAdmin": true,
+      "scenes": [
+        "group"
+      ]
+    },
+    {
+      "name": "群管帮助",
+      "description": "群管插件的全部指令",
+      "scenes": [
+        "group"
+      ]
+    },
+    {
+      "name": "禁言",
+      "usage": "/禁言 <秒数> @群友",
+      "description": "禁言群友，不写秒数随机",
+      "panelOnlyAdmin": true,
+      "scenes": [
+        "group"
+      ]
+    },
+    {
+      "name": "解禁",
+      "usage": "/解禁 @群友",
+      "description": "解除群友的禁言",
+      "panelOnlyAdmin": true,
+      "scenes": [
+        "group"
+      ]
+    },
+    {
+      "name": "撤回",
+      "usage": "引用一条消息，发 /撤回",
+      "description": "撤回引用的那条消息",
+      "scenes": [
+        "group"
+      ]
+    },
+    {
+      "name": "禁词禁言",
+      "usage": "/禁词禁言 <秒数>",
+      "description": "触发禁词时的禁言秒数",
+      "panelOnlyAdmin": true,
+      "scenes": [
+        "group"
+      ]
+    },
+    {
+      "name": "设置禁词",
+      "aliases": [
+        "禁词",
+        "违禁词"
+      ],
+      "usage": "/设置禁词 词1 词2（+词 -词 增删，不带参数查看）",
+      "description": "设置或查看本群违禁词",
+      "panelOnlyAdmin": true,
+      "scenes": [
+        "group"
+      ]
+    },
+    {
+      "name": "内置禁词",
+      "usage": "/内置禁词 开/关",
+      "description": "开关内置敏感词库",
+      "panelOnlyAdmin": true,
+      "scenes": [
+        "group"
+      ]
+    },
+    {
+      "name": "刷屏禁言",
+      "usage": "/刷屏禁言 <秒数>，0 表示关闭",
+      "description": "刷屏时的禁言秒数",
+      "panelOnlyAdmin": true,
+      "scenes": [
+        "group"
+      ]
+    },
+    {
+      "name": "投票禁言",
+      "usage": "/投票禁言 <秒数> @群友",
+      "description": "发起禁言投票",
+      "scenes": [
+        "group"
+      ]
+    },
+    {
+      "name": "赞同禁言",
+      "description": "赞同当前的禁言投票",
+      "scenes": [
+        "group"
+      ]
+    },
+    {
+      "name": "反对禁言",
+      "description": "反对当前的禁言投票",
+      "scenes": [
+        "group"
+      ]
+    },
+    {
+      "name": "进群审核",
+      "usage": "/进群审核 开/关",
+      "description": "进群审核总开关",
+      "panelOnlyAdmin": true,
+      "scenes": [
+        "group"
+      ]
+    },
+    {
+      "name": "进群白词",
+      "usage": "/进群白词 <关键词...>",
+      "description": "命中就自动批准进群",
+      "panelOnlyAdmin": true,
+      "scenes": [
+        "group"
+      ]
+    },
+    {
+      "name": "进群黑词",
+      "usage": "/进群黑词 <关键词...>",
+      "description": "命中就自动拒绝进群",
+      "panelOnlyAdmin": true,
+      "scenes": [
+        "group"
+      ]
+    },
+    {
+      "name": "未命中驳回",
+      "usage": "/未命中驳回 开/关",
+      "description": "没命中白词就驳回",
+      "panelOnlyAdmin": true,
+      "scenes": [
+        "group"
+      ]
+    },
+    {
+      "name": "进群次数",
+      "usage": "/进群次数 <次数>，0 表示不限制",
+      "description": "没命中几次后拉黑",
+      "panelOnlyAdmin": true,
+      "scenes": [
+        "group"
+      ]
+    },
+    {
+      "name": "进群黑名单",
+      "usage": "/进群黑名单 +@群友 -@群友（也可以写 openid，不带 +- 就整表覆写）",
+      "description": "查看或修改进群黑名单",
+      "panelOnlyAdmin": true,
+      "scenes": [
+        "group"
+      ]
+    },
+    {
+      "name": "进群禁言",
+      "usage": "/进群禁言 <秒数>，0 表示不启用",
+      "description": "新成员进群自动禁言",
+      "panelOnlyAdmin": true,
+      "scenes": [
+        "group"
+      ]
+    },
+    {
+      "name": "进群欢迎",
+      "usage": "/进群欢迎 <欢迎语>，可以用 {nickname}",
+      "description": "设置或查看进群欢迎语",
+      "panelOnlyAdmin": true,
+      "scenes": [
+        "group"
+      ]
+    },
+    {
+      "name": "退群通知",
+      "usage": "/退群通知 开/关",
+      "description": "有人主动退群时通报",
+      "panelOnlyAdmin": true,
+      "scenes": [
+        "group"
+      ]
+    },
+    {
+      "name": "退群拉黑",
+      "usage": "/退群拉黑 开/关",
+      "description": "主动退群的人拉黑",
+      "panelOnlyAdmin": true,
+      "scenes": [
+        "group"
+      ]
+    },
+    {
+      "name": "批准",
+      "aliases": [
+        "同意进群"
+      ],
+      "usage": "引用【进群申请】，发 /批准",
+      "description": "批准引用的进群申请",
+      "panelOnlyAdmin": true,
+      "scenes": [
+        "group"
+      ]
+    },
+    {
+      "name": "驳回",
+      "aliases": [
+        "拒绝进群",
+        "不批准"
+      ],
+      "usage": "引用【进群申请】，发 /驳回 <理由>",
+      "description": "驳回引用的进群申请",
+      "panelOnlyAdmin": true,
+      "scenes": [
+        "group"
+      ]
+    }
+  ],
+  "regex": [],
+  "events": [
+    {
+      "event": [
+        "qq.group.message"
+      ]
+    },
+    {
+      "event": [
+        "qq.group.at_message"
+      ]
+    },
+    {
+      "event": [
+        "qq.group.join_request"
+      ]
+    },
+    {
+      "event": [
+        "qq.group.member_added"
+      ]
+    },
+    {
+      "event": [
+        "qq.group.member_removed"
+      ]
+    },
+    {
+      "event": [
+        "qq.group.robot_added"
+      ]
+    },
+    {
+      "event": [
+        "qq.group.robot_removed"
+      ]
+    }
+  ],
+  "buttons": [
+    {
+      "id": "join_approve",
+      "scenes": [
+        "group",
+        "c2c"
+      ]
+    },
+    {
+      "id": "join_reject",
+      "scenes": [
+        "group",
+        "c2c"
+      ]
+    }
+  ],
+  "cron": [
+    {
+      "name": "votes",
+      "cron": "* * * * *"
+    },
+    {
+      "name": "prune",
+      "cron": "17 20 * * *"
+    }
+  ],
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/ui/*",
+      "auth": "admin"
+    },
+    {
+      "method": "GET",
+      "path": "/api/state",
+      "auth": "admin"
+    },
+    {
+      "method": "POST",
+      "path": "/api/names",
+      "auth": "admin"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/default",
+      "auth": "admin"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/groups/:id",
+      "auth": "admin"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/groups/:id",
+      "auth": "admin"
+    }
+  ],
+  "hasMiddleware": false,
+  "services": [],
+  "durableObjects": [],
+  "displayName": "QQ群管",
+  "description": "群管插件：禁言、撤回、违禁词、刷屏检测、投票禁言、进群审核与欢迎、退群通知，每个群可以单独配置",
+  "ui": {
+    "path": "/ui/",
+    "title": "群管配置",
+    "icon": "shield"
+  }
+}

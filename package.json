@@ -1,0 +1,26 @@
+{
+  "name": "qflarebot-plugin-qqadmin",
+  "version": "0.1.0",
+  "description": "QFlareBot 群管插件：禁言、撤回、违禁词、刷屏检测、投票禁言、进群审核与欢迎，带按群配置的管理页面（移植自 astrbot_plugin_qqadmin）",
+  "license": "GPL-3.0-or-later",
+  "type": "module",
+  "keywords": [
+    "qflarebot-plugin"
+  ],
+  "scripts": {
+    "build:ui": "node scripts/build-ui.mjs",
+    "build": "qqbot-plugin build",
+    "sync": "node scripts/build-ui.mjs && qqbot-plugin build && node -e \"require('node:fs').copyFileSync('dist/manifest.json','manifest.json')\"",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p ui && tsc --noEmit -p test"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250917.0",
+    "@qqbot/plugin-cli": "file:../QFlareBot/packages/plugin-cli",
+    "@qqbot/sdk": "file:../QFlareBot/packages/sdk",
+    "@types/node": "^22.10.0",
+    "esbuild": "^0.28.0",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  }
+}

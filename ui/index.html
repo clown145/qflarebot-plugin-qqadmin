@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>群管配置</title>
+<link rel="stylesheet" href="/tokens.css" />
+<style>/*STYLE*/</style>
+</head>
+<body class="qb-page">
+  <div class="app">
+    <aside class="side qb-card" aria-label="群列表">
+      <div class="side-head">
+        <input id="search" class="qb-input" type="search" placeholder="按群名或 openid 筛选" aria-label="搜索群" />
+        <button id="refresh" class="qb-btn" type="button">刷新群名</button>
+      </div>
+      <p id="count" class="meta"></p>
+      <nav id="list" class="list"></nav>
+    </aside>
+    <main class="main">
+      <header class="detail-head">
+        <div>
+          <h1 id="title">群管配置</h1>
+          <p id="subtitle" class="meta"></p>
+        </div>
+        <div id="actions" class="actions"></div>
+      </header>
+      <div id="form"><p class="qb-card empty">加载中…</p></div>
+    </main>
+  </div>
+  <script type="module">/*SCRIPT*/</script>
+</body>
+</html>
