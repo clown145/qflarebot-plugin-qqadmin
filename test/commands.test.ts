@@ -1,5 +1,5 @@
 import type { MuteOp } from '@qqbot/sdk'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { loadGroup, saveGroup } from '../src/store/groups.js'
 import { ADMIN, at, calls, command, type Env, G, setup, text } from './helpers.js'
 
@@ -62,6 +62,24 @@ describe('禁言、解禁、撤回', () => {
     expect(s.recalled).toEqual(['MSG_1'])
     expect(s.replies).toEqual([])
     expect(text(await command(env, '撤回'))).toBe('未引用要撤回的消息')
+  })
+
+  it('引用了但框架查不到消息 id：说明原因，把推送里引用相关的字段打进日志（不带原文和 auth_token）', async () => {
+    const info = vi.spyOn(env.ctx.logger, 'info')
+    const raw = {
+      message_type: 103,
+      message_scene: { ext: ['msg_idx=REFIDX_self', 'ref_msg_idx=REFIDX_q', 'auth_token=secret'] },
+      msg_elements: [{ msg_idx: 'REFIDX_q', content: '原文' }],
+    }
+    const s = await command(env, '撤回', '', { quote: { messageId: '', refIndex: 'REFIDX_q' }, raw })
+    expect(text(s)).toBe('只能撤回 2 分钟内、机器人收到过的消息')
+    expect(s.recalled).toEqual([])
+    expect(info).toHaveBeenCalledWith('群管撤回没拿到被引用消息的 id', {
+      messageType: 103,
+      ext: ['msg_idx=REFIDX_self', 'ref_msg_idx=REFIDX_q'],
+      messageReference: undefined,
+      element: { keys: ['msg_idx', 'content'], msgIdx: 'REFIDX_q', id: undefined },
+    })
   })
 })
 
