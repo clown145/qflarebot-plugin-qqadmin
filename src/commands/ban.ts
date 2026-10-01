@@ -50,7 +50,7 @@ export const banCommands: Record<string, Command> = {
     description: '撤回引用的那条消息',
     scenes: G,
     // 上游的「撤回 @某人 数量」要翻历史消息，官方接口没有历史消息，只保留引用撤回。
-    // 群里的引用推送不带被引用消息的 id，框架拿 ref index 查它在内存里记的消息，约 3 分钟内、机器人收到过或发出的才查得到
+    // 群里的引用推送不带被引用消息的 id，框架拿 ref index 查它在内存里记的消息，2 分钟内、机器人收到过或发出的才查得到
     handler: guarded('delete_msg', async ({ ctx, session }) => {
       const quote = session.quote
       if (!quote?.messageId) {
