@@ -2,6 +2,7 @@ import { deliverReply, type EventName, normalizePlugin, type OutgoingMessage, ty
 import { createMockContext, createMockSession, type createRecordingApi, type MockSession, type MockSessionOptions } from '@qqbot/sdk/testing'
 import plugin from '../src/index.js'
 import { clearModerationState } from '../src/moderation.js'
+import { clearRecallDiag } from '../src/recallDiag.js'
 import { clearGroupCache } from '../src/store/groups.js'
 import { initSchema } from '../src/store/schema.js'
 import { createSqliteDB, type TestDB } from './sqlite.js'
@@ -20,6 +21,7 @@ export interface Env {
 export async function setup(): Promise<Env> {
   clearGroupCache()
   clearModerationState()
+  clearRecallDiag()
   const db = createSqliteDB()
   await initSchema(db)
   const ctx = createMockContext(plugin, { db, botAdmins: [ADMIN] })

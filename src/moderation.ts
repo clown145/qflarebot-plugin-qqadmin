@@ -2,6 +2,7 @@ import { type EventInput, type PluginContext, qqAt, type Session } from '@qqbot/
 import { errorText, muteMember } from './actions.js'
 import type { GroupConfig } from './fields.js'
 import lexicon from './lexicon.json'
+import { noteGroupMessage } from './recallDiag.js'
 import { loadGroup } from './store/groups.js'
 
 const BUILTIN_WORDS = lexicon.words.map((w) => w.toLowerCase()).filter(Boolean)
@@ -89,6 +90,8 @@ function pruneStamps(now: number): void {
 /** 每条群消息都会经过这里：只读内存里缓存的设置，不写库 */
 export async function moderate({ session, ctx }: EventInput): Promise<void> {
   if (session.scene !== 'group' || !session.messageId || !session.targetId || !session.userId) return
+  // 引用撤回查不到时，用来判断这个 isolate 有没有收到这个群的消息
+  noteGroupMessage(session)
   if (!session.content && !session.attachments.length) return
   if (!firstTime(session.messageId)) return
   const group = await loadGroup(ctx.db, session.targetId)

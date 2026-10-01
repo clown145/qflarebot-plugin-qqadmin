@@ -1,7 +1,7 @@
 import type { MuteOp } from '@qqbot/sdk'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { loadGroup, saveGroup } from '../src/store/groups.js'
-import { ADMIN, at, calls, command, type Env, G, setup, text } from './helpers.js'
+import { ADMIN, at, calls, command, type Env, event, G, setup, text } from './helpers.js'
 
 let env: Env
 beforeEach(async () => {
@@ -57,29 +57,65 @@ describe('禁言、解禁、撤回', () => {
     expect(text(s)).toBe('用户[<@U1>]已解除禁言')
   })
 
-  it('撤回引用的那条消息，用被引用消息的 messageId', async () => {
+  it('撤回引用的那条消息，用被引用消息的 messageId 直接调撤回接口', async () => {
     const s = await command(env, '撤回', '', { memberRole: 'member', quote: { messageId: 'MSG_1' } })
-    expect(s.recalled).toEqual(['MSG_1'])
+    expect(calls(env, 'DELETE', '/messages/').map((c) => c.path)).toEqual([`/v2/groups/${G}/messages/MSG_1`])
     expect(s.replies).toEqual([])
     expect(text(await command(env, '撤回'))).toBe('未引用要撤回的消息')
   })
 
-  it('引用了但框架查不到消息 id：说明原因，把推送里引用相关的字段打进日志（不带原文和 auth_token）', async () => {
-    const info = vi.spyOn(env.ctx.logger, 'info')
+  it('平台拒绝时按错误码说原因，并打 warn 日志', async () => {
+    const warn = vi.spyOn(env.ctx.logger, 'warn')
+    const raw = vi.spyOn(env.api, 'raw')
+    const recall = async () => text(await command(env, '撤回', '', { quote: { messageId: 'MSG_1' } }))
+
+    raw.mockResolvedValueOnce({ status: 400, data: { code: 40064004, message: '已超出消息撤回时限' } })
+    expect(await recall()).toBe('消息发送超过 2 分钟，无法撤回')
+    expect(warn).toHaveBeenLastCalledWith('群管撤回失败', { groupId: G, status: 400, code: 40064004, message: '已超出消息撤回时限' })
+
+    raw.mockResolvedValueOnce({ status: 400, data: { err_code: 40062003, message: '无操作权限' } })
+    expect(await recall()).toBe('我无权撤回这条消息（机器人要是群管理员，且撤不了群主和其他管理员的消息）')
+
+    raw.mockResolvedValueOnce({ status: 500, data: { code: 1, message: '内部错误' } })
+    expect(await recall()).toBe('撤回失败：内部错误（错误码 1）')
+
+    raw.mockRejectedValueOnce(new Error('获取 token 失败'))
+    expect(await recall()).toBe('撤回失败：获取 token 失败')
+  })
+
+  it('引用了但框架查不到消息 id：说明原因；warn 日志带引用字段（不带原文和 auth_token）、本 isolate 收到的群消息数和 bot_state', async () => {
+    await event(env, 'qq.group.message', { content: '群友发的', messageId: 'M1', userId: 'U1' })
+    await event(env, 'qq.group.message', { content: '别的群', messageId: 'M2', userId: 'U1', targetId: 'GROUP_B' })
+    await event(env, 'qq.group.at_message', { content: '@机器人', messageId: 'M3', userId: 'U1' })
+    const warn = vi.spyOn(env.ctx.logger, 'warn')
+    vi.spyOn(env.api.group, 'botState').mockResolvedValueOnce({ member_role: 'admin', recv_msg_setting: 'all' })
     const raw = {
       message_type: 103,
       message_scene: { ext: ['msg_idx=REFIDX_self', 'ref_msg_idx=REFIDX_q', 'auth_token=secret'] },
       msg_elements: [{ msg_idx: 'REFIDX_q', content: '原文' }],
     }
     const s = await command(env, '撤回', '', { quote: { messageId: '', refIndex: 'REFIDX_q' }, raw })
-    expect(text(s)).toBe('只能撤回 2 分钟内、机器人收到过的消息')
-    expect(s.recalled).toEqual([])
-    expect(info).toHaveBeenCalledWith('群管撤回没拿到被引用消息的 id', {
+    expect(text(s)).toBe(
+      '没找到这条消息，撤回不了：只能撤回 2 分钟内、机器人收到过的消息（群主没开「获取群内全部消息」时，群友不 @ 机器人的消息收不到）',
+    )
+    expect(calls(env, 'DELETE', '/messages/')).toEqual([])
+    expect(warn).toHaveBeenCalledWith('群管撤回没拿到被引用消息的 id', {
+      groupId: G,
       messageType: 103,
       ext: ['msg_idx=REFIDX_self', 'ref_msg_idx=REFIDX_q'],
       messageReference: undefined,
       element: { keys: ['msg_idx', 'content'], msgIdx: 'REFIDX_q', id: undefined },
+      isolate: expect.stringMatching(/^[0-9a-z]+$/),
+      isolateActiveSec: expect.any(Number),
+      groupMessages2m: 1,
+      groupAtMessages2m: 1,
+      botState: { member_role: 'admin', recv_msg_setting: 'all' },
     })
+
+    // bot_state 平台没开放时记下报错，不影响回复
+    vi.spyOn(env.api.group, 'botState').mockRejectedValueOnce(new Error('该接口需要平台白名单'))
+    await command(env, '撤回', '', { quote: { messageId: '' }, raw })
+    expect(warn).toHaveBeenLastCalledWith('群管撤回没拿到被引用消息的 id', expect.objectContaining({ botState: { error: '该接口需要平台白名单' } }))
   })
 })
 
