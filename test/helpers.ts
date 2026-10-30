@@ -28,7 +28,9 @@ export async function setup(): Promise<Env> {
   return { db, ctx, api: ctx.api as RecordingApi }
 }
 
-const n = normalizePlugin(plugin)
+/** 归一化后的插件定义：测分发语义（priority / block）时用，别绕过框架直接调 handler */
+export const normalized = normalizePlugin(plugin)
+const n = normalized
 
 /** 群友在群里发命令；who 默认是群管理员 */
 export async function command(env: Env, name: string, argText = '', session: MockSessionOptions = {}): Promise<MockSession> {

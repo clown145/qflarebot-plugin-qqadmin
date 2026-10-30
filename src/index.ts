@@ -41,9 +41,14 @@ export default definePlugin({
   buttons: approveButtons,
 
   events: {
-    // 违禁词、刷屏：每条群消息都看一眼，只读内存里缓存的设置
-    'qq.group.message': moderate,
-    'qq.group.at_message': moderate,
+    // 违禁词、刷屏：每条群消息都看一眼，只读内存里缓存的设置。
+    //
+    // **priority 必须比命令高**：框架在同 priority 时让命令排在事件前面，命令默认
+    // `block: true`，命中后事件就不再跑了。不加这一条的话，`/weather 傻逼`、
+    // `/签到 你妈的` 这类「命令 + 违禁词」消息会被漏检——群管要的是脏话一律拦下，
+    // 不管它长什么样。事件默认 priority 是 0，所以给个正数就够了。
+    'qq.group.message': { priority: 10, handler: moderate },
+    'qq.group.at_message': { priority: 10, handler: moderate },
     'qq.group.join_request': onJoinRequest,
     'qq.group.member_added': onMemberAdded,
     'qq.group.member_removed': onMemberRemoved,
