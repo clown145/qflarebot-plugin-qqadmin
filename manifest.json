@@ -248,12 +248,14 @@
     {
       "event": [
         "qq.group.message"
-      ]
+      ],
+      "priority": 10
     },
     {
       "event": [
         "qq.group.at_message"
-      ]
+      ],
+      "priority": 10
     },
     {
       "event": [
